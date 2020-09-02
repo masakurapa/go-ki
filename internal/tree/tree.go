@@ -31,16 +31,17 @@ func (n *Node) Child() Nodes {
 
 func Make(di dirinfo.DirInfo, opt option.Option) (Nodes, error) {
 	files := make([]fileinfo.FileInfo, 0)
-	err := filepath.Walk(di.Abs(), func(path string, info os.FileInfo, err error) error {
+	abs := di.Abs()
+	err := filepath.Walk(abs, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		// ignore because it includes the root directory
-		if path == di.Abs() {
+		if path == abs {
 			return nil
 		}
 
-		fi := fileinfo.New(strings.TrimPrefix(path, di.Abs()+"/"), info)
+		fi := fileinfo.New(path, strings.TrimPrefix(path, abs+"/"), info)
 
 		if !opt.ShowHiddenFile && fi.IsHiddenFile() {
 			return nil

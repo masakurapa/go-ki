@@ -42,7 +42,13 @@ func (w *writer) write(nodes Nodes, showLineFlgs []bool) {
 		}
 
 		lastNode := i == max
-		fmt.Fprintln(w.out, w.getRuledLine(lastNode, showLineFlgs)+node.fileInfo.Name())
+
+		fileName := node.fileInfo.Name()
+		if node.fileInfo.IsSymlink() {
+			fileName += " -> " + node.fileInfo.SymlinkFileName()
+		}
+
+		fmt.Fprintln(w.out, w.getRuledLine(lastNode, showLineFlgs)+fileName)
 		if node.HasChild() {
 			w.write(node.Child(), append(showLineFlgs, !lastNode))
 		}

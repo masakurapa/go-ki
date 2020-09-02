@@ -7,6 +7,7 @@ import (
 )
 
 type FileInfo struct {
+	abs        string
 	path       string
 	dir        string
 	info       os.FileInfo
@@ -14,8 +15,9 @@ type FileInfo struct {
 	depth      int
 }
 
-func New(path string, fi os.FileInfo) FileInfo {
+func New(abs, path string, fi os.FileInfo) FileInfo {
 	return FileInfo{
+		abs:        abs,
 		path:       path,
 		dir:        filepath.Dir(path),
 		info:       fi,
@@ -60,4 +62,17 @@ func (fi *FileInfo) Depth() int {
 
 func (fi *FileInfo) IsFirstLevel() bool {
 	return fi.Depth() == 0
+}
+
+func (fi *FileInfo) IsSymlink() bool {
+	return fi.info.Mode()&os.ModeSymlink == os.ModeSymlink
+}
+
+func (fi *FileInfo) SymlinkFileName() string {
+	realPath, err := os.Readlink(fi.abs)
+	if err != nil {
+		//TODO: error handling
+		return ""
+	}
+	return filepath.Base(realPath)
 }
