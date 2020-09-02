@@ -11,6 +11,7 @@ import (
 func (nodes *Nodes) Write(out io.Writer, di dirinfo.DirInfo, opt option.Option) {
 	w := writer{
 		out: out,
+		di:  di,
 		opt: opt,
 	}
 
@@ -27,6 +28,7 @@ func (nodes *Nodes) Write(out io.Writer, di dirinfo.DirInfo, opt option.Option) 
 
 type writer struct {
 	out     io.Writer
+	di      dirinfo.DirInfo
 	opt     option.Option
 	dirCnt  int
 	fileCnt int
@@ -42,20 +44,14 @@ func (w *writer) write(nodes Nodes, showLineFlgs []bool) {
 		}
 
 		lastNode := i == max
-
-		fileName := node.fileInfo.Name()
-		if node.fileInfo.IsSymlink() {
-			fileName += " -> " + node.fileInfo.SymlinkFileName()
-		}
-
-		fmt.Fprintln(w.out, w.getRuledLine(lastNode, showLineFlgs)+fileName)
+		fmt.Fprintln(w.out, w.genRuledLine(lastNode, showLineFlgs)+w.genFileName(node))
 		if node.HasChild() {
 			w.write(node.Child(), append(showLineFlgs, !lastNode))
 		}
 	}
 }
 
-func (*writer) getRuledLine(isLastNode bool, showLineFlgs []bool) string {
+func (*writer) genRuledLine(isLastNode bool, showLineFlgs []bool) string {
 	line := ""
 	for _, b := range showLineFlgs {
 		if b {
@@ -72,4 +68,18 @@ func (*writer) getRuledLine(isLastNode bool, showLineFlgs []bool) string {
 	}
 
 	return line
+}
+
+func (w *writer) genFileName(node Node) string {
+	name := node.fileInfo.Name()
+
+	if w.opt.ShowFullPath {
+		name = w.di.PathWithAddSuffix() + node.fileInfo.Path()
+	}
+
+	if node.fileInfo.IsSymlink() {
+		return name + " -> " + node.fileInfo.SymlinkFileName()
+	}
+
+	return name
 }

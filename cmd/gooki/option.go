@@ -39,6 +39,7 @@ func getDirInfo() dirinfo.DirInfo {
 func parseFlags(opt *option.Option) {
 	flag.BoolVar(&opt.ShowHiddenFile, "a", opt.ShowHiddenFile, "Outputs all files. By default does not hidden files.")
 	flag.BoolVar(&opt.OnlyDirectory, "d", opt.OnlyDirectory, "Outputs only directories.")
+	flag.BoolVar(&opt.ShowFullPath, "f", opt.ShowFullPath, "Outputs full path prefix for each file.")
 	flag.BoolVar(&opt.Help, "help", opt.Help, "Outputs a usage.")
 
 	flag.Parse()

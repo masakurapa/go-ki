@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type DirInfo struct {
@@ -33,6 +34,13 @@ func New(val string) (*DirInfo, error) {
 
 func (d *DirInfo) Path() string {
 	return d.path
+}
+
+func (d *DirInfo) PathWithAddSuffix() string {
+	if strings.HasSuffix(d.path, "/") {
+		return d.path
+	}
+	return d.path + "/"
 }
 
 func (d *DirInfo) Abs() string {

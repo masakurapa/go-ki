@@ -38,6 +38,9 @@ func usage() {
 Description:
 	'gooki' is list contents of directories in a tree-like format.
 
+Synopsis:
+	gooki [options...] directory
+
 Options:`)
 
 	flag.PrintDefaults()

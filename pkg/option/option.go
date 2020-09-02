@@ -4,6 +4,7 @@ var (
 	Default = Option{
 		ShowHiddenFile: false,
 		OnlyDirectory:  false,
+		ShowFullPath:   false,
 		Help:           false,
 	}
 )
@@ -11,5 +12,6 @@ var (
 type Option struct {
 	ShowHiddenFile bool
 	OnlyDirectory  bool
+	ShowFullPath   bool
 	Help           bool
 }
