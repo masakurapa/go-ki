@@ -17,7 +17,12 @@ func (nodes *Nodes) Write(out io.Writer, di dirinfo.DirInfo, opt option.Option) 
 	fmt.Fprintln(out, di.Path())
 	w.write(*nodes, []bool{})
 	fmt.Fprintln(out, "")
-	fmt.Fprintln(out, fmt.Sprintf("%d directories, %d files", w.dirCnt, w.fileCnt))
+
+	if opt.OnlyDirectory {
+		fmt.Fprintln(out, fmt.Sprintf("%d directories", w.dirCnt))
+	} else {
+		fmt.Fprintln(out, fmt.Sprintf("%d directories, %d files", w.dirCnt, w.fileCnt))
+	}
 }
 
 type writer struct {

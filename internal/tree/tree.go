@@ -45,6 +45,9 @@ func Make(di dirinfo.DirInfo, opt option.Option) (Nodes, error) {
 		if !opt.ShowHiddenFile && fi.IsHiddenFile() {
 			return nil
 		}
+		if opt.OnlyDirectory && !fi.IsDir() {
+			return nil
+		}
 
 		files = append(files, fi)
 		return nil
