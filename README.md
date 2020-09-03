@@ -32,3 +32,30 @@ Options:
   -help
     	Outputs a usage.
 ```
+
+## Example
+```
+$ gooki
+.
+├── LICENSE
+├── Makefile
+├── README.md
+├── cmd
+│   └── gooki
+│       ├── main.go
+│       └── option.go
+├── go.mod
+├── internal
+│   ├── dirinfo
+│   │   └── dirinfo.go
+│   ├── fileinfo
+│   │   └── fileinfo.go
+│   └── tree
+│       ├── tree.go
+│       └── write.go
+└── pkg
+    └── option
+        └── option.go
+
+8 directories, 11 files
+```
