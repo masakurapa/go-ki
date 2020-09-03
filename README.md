@@ -1,13 +1,27 @@
 # gooki
 list contents of directories in a tree-like format.
 
-## Installing
+## Module
+
+### Usage
+
+```
+import "github.com/masakurapa/gooki"
+
+func main() {
+	gooki.Make(".", gooki.DefaultOption())
+}
+```
+
+## Command Line Tool
+
+### Installing
 
 ```
 $ go get -u github.com/masakurapa/gooki/cmd/gooki
 ```
 
-## Usage
+### Usage
 
 ```
 $ gooki -help
@@ -33,7 +47,7 @@ Options:
     	Outputs a usage.
 ```
 
-## Example
+### Example
 ```
 $ gooki
 .
