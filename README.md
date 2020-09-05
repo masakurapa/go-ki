@@ -9,7 +9,7 @@ list contents of directories in a tree-like format.
 import "github.com/masakurapa/gooki"
 
 func main() {
-	gooki.Make(".", gooki.DefaultOption())
+	gooki.MakeByDefaultOption(".")
 }
 ```
 
@@ -56,20 +56,16 @@ $ gooki
 ├── README.md
 ├── cmd
 │   └── gooki
-│       ├── main.go
-│       └── option.go
+│       └── main.go
 ├── go.mod
-├── internal
-│   ├── dirinfo
-│   │   └── dirinfo.go
-│   ├── fileinfo
-│   │   └── fileinfo.go
-│   └── tree
-│       ├── tree.go
-│       └── write.go
-└── pkg
-    └── option
+├── gooki.go
+└── internal
+    ├── ki
+    │   ├── interface.go
+    │   ├── ki.go
+    │   └── tree_writer.go
+    └── opt
         └── option.go
 
-8 directories, 11 files
+5 directories, 10 files
 ```
