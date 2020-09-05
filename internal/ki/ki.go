@@ -25,6 +25,7 @@ func Make(originalPath string, option gooki.Option) (gooki.Ki, error) {
 		eda:          makeEda(ha, "."),
 		absPath:      absPath,
 		originalPath: originalPath,
+		option:       option,
 	}, nil
 }
 
@@ -42,15 +43,9 @@ func makeHappa(baseAbs string, option gooki.Option) ([]gooki.Happa, error) {
 		}
 
 		h := newHappa(baseAbs, path, info)
-
-		if !option.AllFile && h.IsHiddenFile() {
-			return nil
+		if isOutputTarget(h, option) {
+			ha = append(ha, h)
 		}
-		if option.DirectoryOnly && !h.IsDir() {
-			return nil
-		}
-
-		ha = append(ha, h)
 		return nil
 	})
 
@@ -58,6 +53,22 @@ func makeHappa(baseAbs string, option gooki.Option) ([]gooki.Happa, error) {
 		return nil, err
 	}
 	return ha, nil
+}
+
+func isOutputTarget(ha gooki.Happa, option gooki.Option) bool {
+	if !option.AllFile && ha.IsHiddenFile() {
+		return false
+	}
+	if option.DirectoryOnly && !ha.IsDir() {
+		return false
+	}
+	if option.ModuleOption.IgnoreTest && !ha.IsDir() {
+		if strings.HasSuffix(ha.Name(), "_test.go") {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Happaの初期化を行います

@@ -13,20 +13,26 @@ type Option struct {
 	// ShowFullPath がtrueの場合外部出力時のファイル名にファイルのフルパスを付与して出力します
 	// デフォルトはファイル名のみを出力します
 	ShowFullPath bool
+
+	// ModuleOption はモジュールから使うためのオプションです
+	ModuleOption ModuleOption
 }
 
-/*
-DefaultOption はデフォルト値を設定したオプションを返します。
+// ModuleOption はモジュールから使うためのオプションです
+type ModuleOption struct {
+	// IgnoreTest がtrueの場合、_test.goで終わるテストファイルを無視します
+	// デフォルトはテストファイルを含みます
+	IgnoreTest bool
+}
 
-Default Values:
-	AllFile:       false    隠しファイルを出力しない
-	DirectoryOnly: false    ファイルを出力
-	ShowFullPath:  false    ファイル名のみ出力
-*/
+// DefaultOption はデフォルト値を設定したオプションを返します。
 func DefaultOption() Option {
 	return Option{
 		AllFile:       false,
 		DirectoryOnly: false,
 		ShowFullPath:  false,
+		ModuleOption: ModuleOption{
+			IgnoreTest: false,
+		},
 	}
 }
