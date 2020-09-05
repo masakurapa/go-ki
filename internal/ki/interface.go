@@ -2,14 +2,14 @@ package ki
 
 import (
 	"io"
-
-	"github.com/masakurapa/gooki/internal/opt"
 )
 
 // Ki はディレクトリツリー全体を扱うインタフェースです
 type Ki interface {
+	// Eda はファイルまたはディレクトリを返します
 	Eda() []Eda
-	WriteTree(out io.Writer, option opt.Option) error
+	// Write はディレクトリツリーの情報をツリー形式で書き込みを行います
+	Write(out io.Writer) error
 }
 
 // Eda はファイルまたはディレクトリ情報を階層化するためのインタフェースです

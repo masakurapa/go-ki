@@ -33,7 +33,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := k.WriteTree(os.Stdout, option); err != nil {
+	if err := k.Write(os.Stdout); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		fmt.Fprintln(os.Stderr, "")
 		os.Exit(1)

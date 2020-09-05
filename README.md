@@ -6,10 +6,15 @@ list contents of directories in a tree-like format.
 ### Usage
 
 ```
-import "github.com/masakurapa/gooki"
+import (
+	"os"
+
+	"github.com/masakurapa/gooki"
+)
 
 func main() {
-	gooki.MakeByDefaultOption(".")
+	ki, _ := gooki.MakeByDefaultOption(".")
+	ki.Write(os.Stdout)
 }
 ```
 

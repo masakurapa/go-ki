@@ -100,17 +100,19 @@ type ki struct {
 	originalPath string
 	// ファイルまたはディレクトリの集合
 	eda []Eda
+	// オプション
+	option opt.Option
 }
 
 func (k *ki) Eda() []Eda {
 	return k.eda
 }
 
-func (k *ki) WriteTree(out io.Writer, option opt.Option) error {
+func (k *ki) Write(out io.Writer) error {
 	w := &treeWriter{
 		writer: writer{
 			out:    out,
-			option: option,
+			option: k.option,
 		},
 		basePath: k.originalPath,
 	}
