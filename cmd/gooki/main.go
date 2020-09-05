@@ -1,3 +1,8 @@
+/*
+Package gooki はディレクトリの内容をツリー構造で出力するコマンドラインツールです
+
+
+*/
 package main
 
 import (
@@ -5,25 +10,63 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/masakurapa/gooki/internal/tree"
+	"github.com/masakurapa/gooki"
+	"github.com/masakurapa/gooki/internal/opt"
+)
+
+var (
+	help bool
 )
 
 func main() {
-	di, opt := parseFlagAndArgs()
+	path, option := parseFlagAndArgs()
 	// if the -h option is specified, outputs usage and exit
-	if opt.Help {
+	if help {
 		usage()
 		os.Exit(0)
 	}
 
-	nodes, err := tree.Make(di, opt)
+	k, err := gooki.Make(path, option)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		fmt.Fprintln(os.Stderr, "")
 		os.Exit(1)
 	}
 
-	nodes.Write(os.Stdout, di, opt)
+	if err := k.WriteTree(os.Stdout, option); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "")
+		os.Exit(1)
+	}
+}
+
+func parseFlagAndArgs() (string, opt.Option) {
+	flag.Usage = func() {
+		usage()
+		os.Exit(2)
+	}
+
+	option := parseFlags()
+	arg := flag.Arg(0)
+	if arg == "" {
+		arg = "."
+	}
+
+	return arg, option
+}
+
+func parseFlags() opt.Option {
+	o := gooki.DefaultOption()
+
+	flag.BoolVar(&o.AllFile, "a", o.AllFile, "Outputs all files. By default does not hidden files.")
+	flag.BoolVar(&o.DirectoryOnly, "d", o.DirectoryOnly, "Outputs only directories.")
+
+	flag.BoolVar(&o.ShowFullPath, "f", o.ShowFullPath, "Outputs full path prefix for each file.")
+
+	flag.BoolVar(&help, "help", false, "Outputs a usage.")
+
+	flag.Parse()
+	return o
 }
 
 func usage() {
