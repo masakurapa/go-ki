@@ -1,6 +1,7 @@
 package ki
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -11,7 +12,7 @@ import (
 
 // Make はディレクトリ内容のツリー構造を生成します
 func Make(originalPath string, option gooki.Option) (gooki.Ki, error) {
-	absPath, err := filepath.Abs(originalPath)
+	absPath, err := getAbsPath(originalPath)
 	if err != nil {
 		return nil, err
 	}
@@ -31,6 +32,17 @@ func Make(originalPath string, option gooki.Option) (gooki.Ki, error) {
 
 	k.eda = k.makeEda(ha, ".")
 	return &k, nil
+}
+
+func getAbsPath(path string) (string, error) {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return "", err
+	}
+	if !fi.IsDir() {
+		return "", fmt.Errorf("%q is not directory", path)
+	}
+	return filepath.Abs(path)
 }
 
 type ki struct {
