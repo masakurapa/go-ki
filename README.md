@@ -6,6 +6,8 @@ list contents of directories in a tree-like format.
 ### Usage
 
 ```
+package main
+
 import (
 	"os"
 
@@ -64,12 +66,14 @@ $ gooki
 │       └── main.go
 ├── go.mod
 ├── gooki.go
-└── internal
-    ├── ki
-    │   ├── interface.go
-    │   ├── ki.go
-    │   └── tree_writer.go
-    └── opt
+├── internal
+│   └── ki
+│       ├── interface.go
+│       ├── ki.go
+│       └── tree_writer.go
+└── pkg
+    └── gooki
+        ├── gooki.go
         └── option.go
 
 5 directories, 10 files

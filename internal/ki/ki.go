@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/masakurapa/gooki/internal/opt"
+	"github.com/masakurapa/gooki/pkg/gooki"
 )
 
 // Make はディレクトリ内容のツリー構造を生成します
-func Make(originalPath string, option opt.Option) (Ki, error) {
+func Make(originalPath string, option gooki.Option) (gooki.Ki, error) {
 	absPath, err := filepath.Abs(originalPath)
 	if err != nil {
 		return nil, err
@@ -29,8 +29,8 @@ func Make(originalPath string, option opt.Option) (Ki, error) {
 }
 
 // Happaを作る
-func makeHappa(baseAbs string, option opt.Option) ([]Happa, error) {
-	ha := make([]Happa, 0)
+func makeHappa(baseAbs string, option gooki.Option) ([]gooki.Happa, error) {
+	ha := make([]gooki.Happa, 0)
 	// Walkに絶対パスを渡すのでクロージャのpathも絶対パスになる
 	err := filepath.Walk(baseAbs, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -61,7 +61,7 @@ func makeHappa(baseAbs string, option opt.Option) ([]Happa, error) {
 }
 
 // Happaの初期化を行います
-func newHappa(baseAbsPath, fileAbsPath string, info os.FileInfo) Happa {
+func newHappa(baseAbsPath, fileAbsPath string, info os.FileInfo) gooki.Happa {
 	path := strings.TrimPrefix(fileAbsPath, baseAbsPath+"/")
 	return &happa{
 		absPath:      fileAbsPath,
@@ -74,8 +74,8 @@ func newHappa(baseAbsPath, fileAbsPath string, info os.FileInfo) Happa {
 	}
 }
 
-func makeEda(ha []Happa, base string) []Eda {
-	ed := make([]Eda, 0, len(ha))
+func makeEda(ha []gooki.Happa, base string) []gooki.Eda {
+	ed := make([]gooki.Eda, 0, len(ha))
 
 	for _, h := range ha {
 		// skip if the file is not directly under the base path.
@@ -99,12 +99,12 @@ type ki struct {
 	// ツリー生成時に渡されるパスを保持
 	originalPath string
 	// ファイルまたはディレクトリの集合
-	eda []Eda
+	eda []gooki.Eda
 	// オプション
-	option opt.Option
+	option gooki.Option
 }
 
-func (k *ki) Eda() []Eda {
+func (k *ki) Eda() []gooki.Eda {
 	return k.eda
 }
 
@@ -121,15 +121,15 @@ func (k *ki) Write(out io.Writer) error {
 
 // eda はファイルまたはディレクトリ情報を表します
 type eda struct {
-	eda []Eda
-	ha  Happa
+	eda []gooki.Eda
+	ha  gooki.Happa
 }
 
-func (e *eda) Child() []Eda {
+func (e *eda) Child() []gooki.Eda {
 	return e.eda
 }
 
-func (e *eda) Happa() Happa {
+func (e *eda) Happa() gooki.Happa {
 	return e.ha
 }
 

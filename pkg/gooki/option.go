@@ -1,4 +1,4 @@
-package opt
+package gooki
 
 // Option はディレクトリツリー生成用のオプションを表します
 type Option struct {
@@ -13,4 +13,20 @@ type Option struct {
 	// ShowFullPath がtrueの場合外部出力時のファイル名にファイルのフルパスを付与して出力します
 	// デフォルトはファイル名のみを出力します
 	ShowFullPath bool
+}
+
+/*
+DefaultOption はデフォルト値を設定したオプションを返します。
+
+Default Values:
+	AllFile:       false    隠しファイルを出力しない
+	DirectoryOnly: false    ファイルを出力
+	ShowFullPath:  false    ファイル名のみ出力
+*/
+func DefaultOption() Option {
+	return Option{
+		AllFile:       false,
+		DirectoryOnly: false,
+		ShowFullPath:  false,
+	}
 }

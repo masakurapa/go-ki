@@ -8,16 +8,16 @@ import (
 	"os"
 
 	"github.com/masakurapa/gooki/internal/ki"
-	"github.com/masakurapa/gooki/internal/opt"
+	"github.com/masakurapa/gooki/pkg/gooki"
 )
 
 // MakeByDefaultOption はデフォルトのオプションでディレクトリツリー情報を生成します。
-func MakeByDefaultOption(path string) (ki.Ki, error) {
+func MakeByDefaultOption(path string) (gooki.Ki, error) {
 	return Make(path, DefaultOption())
 }
 
 // Make はディレクトリツリー情報を生成します。
-func Make(path string, option opt.Option) (ki.Ki, error) {
+func Make(path string, option gooki.Option) (gooki.Ki, error) {
 	fi, err := os.Stat(path)
 	if err != nil {
 		return nil, err
@@ -36,10 +36,6 @@ Default Values:
 	DirectoryOnly: false    ファイルを出力
 	ShowFullPath:  false    ファイル名のみ出力
 */
-func DefaultOption() opt.Option {
-	return opt.Option{
-		AllFile:       false,
-		DirectoryOnly: false,
-		ShowFullPath:  false,
-	}
+func DefaultOption() gooki.Option {
+	return gooki.DefaultOption()
 }

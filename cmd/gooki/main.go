@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/masakurapa/gooki"
-	"github.com/masakurapa/gooki/internal/opt"
+	"github.com/masakurapa/gooki/internal/ki"
+	"github.com/masakurapa/gooki/pkg/gooki"
 )
 
 var (
@@ -26,7 +26,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	k, err := gooki.Make(path, option)
+	k, err := ki.Make(path, option)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		fmt.Fprintln(os.Stderr, "")
@@ -40,7 +40,7 @@ func main() {
 	}
 }
 
-func parseFlagAndArgs() (string, opt.Option) {
+func parseFlagAndArgs() (string, gooki.Option) {
 	flag.Usage = func() {
 		usage()
 		os.Exit(2)
@@ -55,7 +55,7 @@ func parseFlagAndArgs() (string, opt.Option) {
 	return arg, option
 }
 
-func parseFlags() opt.Option {
+func parseFlags() gooki.Option {
 	o := gooki.DefaultOption()
 
 	flag.BoolVar(&o.AllFile, "a", o.AllFile, "Outputs all files. By default does not hidden files.")
