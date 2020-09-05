@@ -8,45 +8,32 @@ import (
 	"github.com/masakurapa/gooki/pkg/gooki"
 )
 
-type writer struct {
-	out    io.Writer
-	option gooki.Option
-}
-
 type treeWriter struct {
-	writer
-	basePath  string // 起点ディレクトリのパス
-	dirCount  int
-	fileCount int
+	out io.Writer
+	ki  ki
 }
 
-func (w *treeWriter) Write(ed []gooki.Eda) error {
-	fmt.Fprintln(w.writer.out, w.basePath)
-	w.write(ed, []bool{})
-	fmt.Fprintln(w.writer.out, "")
+func (w *treeWriter) write() error {
+	fmt.Fprintln(w.out, w.ki.originalPath)
+	w.output(w.ki.Eda(), []bool{})
+	fmt.Fprintln(w.out, "")
 
-	if w.writer.option.DirectoryOnly {
-		fmt.Fprintln(w.writer.out, fmt.Sprintf("%d directories", w.dirCount))
+	if w.ki.option.DirectoryOnly {
+		fmt.Fprintln(w.out, fmt.Sprintf("%d directories", w.ki.dirCount))
 	} else {
-		fmt.Fprintln(w.writer.out, fmt.Sprintf("%d directories, %d files", w.dirCount, w.fileCount))
+		fmt.Fprintln(w.out, fmt.Sprintf("%d directories, %d files", w.ki.dirCount, w.ki.fileCount))
 	}
 
 	return nil
 }
 
-func (w *treeWriter) write(ed []gooki.Eda, showLineFlgs []bool) {
+func (w *treeWriter) output(ed []gooki.Eda, showLineFlgs []bool) {
 	max := len(ed) - 1
 	for i, e := range ed {
-		if e.Happa().IsDir() {
-			w.dirCount++
-		} else {
-			w.fileCount++
-		}
-
 		lastNode := i == max
 		fmt.Fprintln(w.out, w.genRuledLine(lastNode, showLineFlgs)+w.genFileName(e))
 		if e.HasChild() {
-			w.write(e.Child(), append(showLineFlgs, !lastNode))
+			w.output(e.Child(), append(showLineFlgs, !lastNode))
 		}
 	}
 }
@@ -76,11 +63,11 @@ func (w *treeWriter) genFileName(e gooki.Eda) string {
 	ha := e.Happa()
 	name := ha.Name()
 
-	if w.option.ShowFullPath {
-		if strings.HasSuffix(w.basePath, "/") {
-			name = w.basePath + ha.RelPath()
+	if w.ki.option.ShowFullPath {
+		if strings.HasSuffix(w.ki.originalPath, "/") {
+			name = w.ki.originalPath + ha.RelPath()
 		} else {
-			name = w.basePath + "/" + ha.RelPath()
+			name = w.ki.originalPath + "/" + ha.RelPath()
 		}
 	}
 

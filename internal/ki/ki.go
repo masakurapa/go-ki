@@ -16,21 +16,52 @@ func Make(originalPath string, option gooki.Option) (gooki.Ki, error) {
 		return nil, err
 	}
 
-	ha, err := makeHappa(absPath, option)
+	k := ki{
+		absPath:      absPath,
+		originalPath: originalPath,
+		option:       option,
+	}
+
+	ha, err := k.makeHappa(absPath, option)
 	if err != nil {
 		return nil, err
 	}
 
-	return &ki{
-		eda:          makeEda(ha, "."),
-		absPath:      absPath,
-		originalPath: originalPath,
-		option:       option,
-	}, nil
+	k.countDirAndFile(ha)
+
+	k.eda = k.makeEda(ha, ".")
+	return &k, nil
+}
+
+type ki struct {
+	// ディレクトリツリーの起点となるパスの絶対パス
+	absPath string
+	// ツリー生成時に渡されるパスを保持
+	originalPath string
+	// ファイルまたはディレクトリの集合
+	eda []gooki.Eda
+	// オプション
+	option gooki.Option
+	// ツリーのディレクトリ数
+	dirCount int
+	// ツリーのファイル数
+	fileCount int
+}
+
+func (k *ki) Eda() []gooki.Eda {
+	return k.eda
+}
+
+func (k *ki) Write(out io.Writer) error {
+	w := &treeWriter{
+		out: out,
+		ki:  *k,
+	}
+	return w.write()
 }
 
 // Happaを作る
-func makeHappa(baseAbs string, option gooki.Option) ([]gooki.Happa, error) {
+func (k *ki) makeHappa(baseAbs string, option gooki.Option) ([]gooki.Happa, error) {
 	ha := make([]gooki.Happa, 0)
 	// Walkに絶対パスを渡すのでクロージャのpathも絶対パスになる
 	err := filepath.Walk(baseAbs, func(path string, info os.FileInfo, err error) error {
@@ -42,8 +73,8 @@ func makeHappa(baseAbs string, option gooki.Option) ([]gooki.Happa, error) {
 			return nil
 		}
 
-		h := newHappa(baseAbs, path, info)
-		if isOutputTarget(h, option) {
+		h := k.newHappa(baseAbs, path, info)
+		if k.isOutputTarget(h, option) {
 			ha = append(ha, h)
 		}
 		return nil
@@ -55,7 +86,17 @@ func makeHappa(baseAbs string, option gooki.Option) ([]gooki.Happa, error) {
 	return ha, nil
 }
 
-func isOutputTarget(ha gooki.Happa, option gooki.Option) bool {
+func (k *ki) countDirAndFile(ha []gooki.Happa) {
+	for _, h := range ha {
+		if h.IsDir() {
+			k.dirCount++
+		} else {
+			k.fileCount++
+		}
+	}
+}
+
+func (k *ki) isOutputTarget(ha gooki.Happa, option gooki.Option) bool {
 	if !option.AllFile && ha.IsHiddenFile() {
 		return false
 	}
@@ -72,7 +113,7 @@ func isOutputTarget(ha gooki.Happa, option gooki.Option) bool {
 }
 
 // Happaの初期化を行います
-func newHappa(baseAbsPath, fileAbsPath string, info os.FileInfo) gooki.Happa {
+func (k *ki) newHappa(baseAbsPath, fileAbsPath string, info os.FileInfo) gooki.Happa {
 	path := strings.TrimPrefix(fileAbsPath, baseAbsPath+"/")
 	return &happa{
 		absPath:      fileAbsPath,
@@ -85,7 +126,7 @@ func newHappa(baseAbsPath, fileAbsPath string, info os.FileInfo) gooki.Happa {
 	}
 }
 
-func makeEda(ha []gooki.Happa, base string) []gooki.Eda {
+func (k *ki) makeEda(ha []gooki.Happa, base string) []gooki.Eda {
 	ed := make([]gooki.Eda, 0, len(ha))
 
 	for _, h := range ha {
@@ -96,38 +137,12 @@ func makeEda(ha []gooki.Happa, base string) []gooki.Eda {
 
 		e := eda{ha: h}
 		if h.IsDir() {
-			e.eda = makeEda(ha, h.RelPath())
+			e.eda = k.makeEda(ha, h.RelPath())
 		}
 		ed = append(ed, &e)
 	}
 
 	return ed
-}
-
-type ki struct {
-	// ディレクトリツリーの起点となるパスの絶対パス
-	absPath string
-	// ツリー生成時に渡されるパスを保持
-	originalPath string
-	// ファイルまたはディレクトリの集合
-	eda []gooki.Eda
-	// オプション
-	option gooki.Option
-}
-
-func (k *ki) Eda() []gooki.Eda {
-	return k.eda
-}
-
-func (k *ki) Write(out io.Writer) error {
-	w := &treeWriter{
-		writer: writer{
-			out:    out,
-			option: k.option,
-		},
-		basePath: k.originalPath,
-	}
-	return w.Write(k.Eda())
 }
 
 // eda はファイルまたはディレクトリ情報を表します

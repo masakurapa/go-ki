@@ -28,14 +28,7 @@ func Make(path string, option gooki.Option) (gooki.Ki, error) {
 	return ki.Make(path, option)
 }
 
-/*
-DefaultOption はデフォルト値を設定したオプションを返します。
-
-Default Values:
-	AllFile:       false    隠しファイルを出力しない
-	DirectoryOnly: false    ファイルを出力
-	ShowFullPath:  false    ファイル名のみ出力
-*/
+/// DefaultOption はデフォルト値を設定したオプションを返します。
 func DefaultOption() gooki.Option {
 	return gooki.DefaultOption()
 }
