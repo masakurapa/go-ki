@@ -133,7 +133,7 @@ func (k *ki) newHappa(baseAbsPath, fileAbsPath string, info os.FileInfo) gooki.H
 		dir:          filepath.Dir(path),
 		name:         info.Name(),
 		isDir:        info.IsDir(),
-		isHiddenFile: strings.HasPrefix(fileAbsPath, ".") || strings.HasPrefix(info.Name(), "."),
+		isHiddenFile: strings.HasPrefix(path, ".") || strings.HasPrefix(info.Name(), "."),
 		isSymlink:    info.Mode()&os.ModeSymlink == os.ModeSymlink,
 	}
 }

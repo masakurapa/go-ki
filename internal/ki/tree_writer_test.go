@@ -8,8 +8,8 @@ import (
 	"github.com/masakurapa/gooki/pkg/gooki"
 )
 
-func TestWrite(t *testing.T) {
-	path, _ := testPath(t)
+func TestKi_Write(t *testing.T) {
+	path := "../../testdata"
 
 	type args struct {
 		option gooki.Option
@@ -51,6 +51,8 @@ func TestWrite(t *testing.T) {
 				}(),
 			},
 			want: `../../testdata
+├── .hidden
+│   └── test.txt
 ├── .hidden1
 ├── example.txt
 ├── path1
@@ -66,7 +68,7 @@ func TestWrite(t *testing.T) {
 │   └── example1_test.go
 └── symlink.txt -> example.txt
 
-4 directories, 10 files
+5 directories, 11 files
 `,
 		},
 		{

@@ -139,6 +139,23 @@ func TestMake(t *testing.T) {
 			},
 			want: []expectedEda{
 				{
+					name: ".hidden",
+					ha: expectedHappa{
+						absPath: abs + "/.hidden", relPath: ".hidden", dir: ".", name: ".hidden", isDir: true, isHiddenFile: true, isSymlink: false, realName: "",
+					},
+					hasChild: true,
+					eda: []expectedEda{
+						{
+							name: "test.txt",
+							ha: expectedHappa{
+								absPath: abs + "/.hidden/test.txt", relPath: ".hidden/test.txt", dir: ".hidden", name: "test.txt", isDir: false, isHiddenFile: true, isSymlink: false, realName: "",
+							},
+							hasChild: false,
+							eda:      []expectedEda{},
+						},
+					},
+				},
+				{
 					name: ".hidden1",
 					ha: expectedHappa{
 						absPath: abs + "/.hidden1", relPath: ".hidden1", dir: ".", name: ".hidden1", isDir: false, isHiddenFile: true, isSymlink: false, realName: "",
@@ -466,35 +483,35 @@ func assertEda(t *testing.T, name string, expected []expectedEda, actual []gooki
 		ae := actual[i]
 
 		if got := ae.HasChild(); ee.hasChild != got {
-			t.Errorf("gooki.Eda.HasChild() want = %v, got = %v", ee.hasChild, got)
+			t.Errorf("[%s]gooki.Eda.HasChild() want = %v, got = %v", ee.name, ee.hasChild, got)
 		}
 
 		eh := ee.ha
 		ah := ae.Happa()
 
 		if got := ah.AbsPath(); eh.absPath != got {
-			t.Errorf("gooki.Happa.AbsPath() want = %q, got = %q", eh.absPath, got)
+			t.Errorf("[%s]gooki.Happa.AbsPath() want = %q, got = %q", ee.name, eh.absPath, got)
 		}
 		if got := ah.RelPath(); eh.relPath != got {
-			t.Errorf("gooki.Happa.RelPath() want = %q, got = %q", eh.relPath, got)
+			t.Errorf("[%s]gooki.Happa.RelPath() want = %q, got = %q", ee.name, eh.relPath, got)
 		}
 		if got := ah.Dir(); eh.dir != got {
-			t.Errorf("gooki.Happa.Dir() want = %q, got = %q", eh.dir, got)
+			t.Errorf("[%s]gooki.Happa.Dir() want = %q, got = %q", ee.name, eh.dir, got)
 		}
 		if got := ah.Name(); eh.name != got {
-			t.Errorf("gooki.Happa.Name() want = %q, got = %q", eh.name, got)
+			t.Errorf("[%s]gooki.Happa.Name() want = %q, got = %q", ee.name, eh.name, got)
 		}
 		if got := ah.IsDir(); eh.isDir != got {
-			t.Errorf("gooki.Happa.IsDir() want = %v, got = %v", eh.isDir, got)
+			t.Errorf("[%s]gooki.Happa.IsDir() want = %v, got = %v", ee.name, eh.isDir, got)
 		}
 		if got := ah.IsHiddenFile(); eh.isHiddenFile != got {
-			t.Errorf("gooki.Happa.IsHiddenFile() want = %v, got = %v", eh.isHiddenFile, got)
+			t.Errorf("[%s]gooki.Happa.IsHiddenFile() want = %v, got = %v", ee.name, eh.isHiddenFile, got)
 		}
 		if got := ah.IsSymlink(); eh.isSymlink != got {
-			t.Errorf("gooki.Happa.IsSymlink() want = %v, got = %v", eh.isSymlink, got)
+			t.Errorf("[%s]gooki.Happa.IsSymlink() want = %v, got = %v", ee.name, eh.isSymlink, got)
 		}
 		if got := ah.RealName(); eh.realName != got {
-			t.Errorf("gooki.Happa.RealName() want = %q, got = %q", eh.realName, got)
+			t.Errorf("[%s]gooki.Happa.RealName() want = %q, got = %q", ee.name, eh.realName, got)
 		}
 
 		assertEda(t, ee.name, ee.eda, ae.Child())
